@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Interest Calculator | Financial Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #10b981;
+            --accent-alt: #f43f5e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Selector */
+        .calculator-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+        }
+
+        .calc-type-btn {
+            flex: 1 1 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 0.5rem;
+            min-height: 100px;
+            border: 2px solid var(--glass-border);
+            border-radius: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calc-type-btn i {
+            font-size: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .calc-type-btn span {
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .calc-type-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .calc-type-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .calc-type-btn.active i {
+            transform: scale(1.1);
+        }
+
+        .calc-type-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .calc-type-btn:hover:not(.active) i {
+            transform: scale(1.15);
+            color: var(--primary);
+        }
+
+        /* Panel */
+        .calculator-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+
+        .formula {
+            color: var(--primary);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        /* Inputs */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dim);
+        }
+
+        input,
+        select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Results */
+        .result-panel {
+            margin-top: 2.5rem;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 2rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .result-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .result-value.interest {
+            color: var(--accent);
+        }
+
+        .result-value.total {
+            color: var(--primary);
+        }
+
+        .result-value.emi {
+            color: #f59e0b;
+        }
+
+        .breakdown {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.05);
+            border-left: 4px solid var(--accent);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Schedule Table */
+        .schedule-table {
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .calculator-panel {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">💰</div>
+                <h1>Master Interest Calculator</h1>
+            </div>
+            <p class="tagline">Calculate Simple, Compound, EMI & More | Built By Vasant Bhor</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Calculator Type Selector -->
+            <div class="calculator-selector">
+                <button class="calc-type-btn active" data-type="simple">
+                    <i class="fas fa-calculator"></i>
+                    <span>Simple Interest</span>
+                </button>
+                <button class="calc-type-btn" data-type="compound">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Compound Interest</span>
+                </button>
+                <button class="calc-type-btn" data-type="emi">
+                    <i class="fas fa-home"></i>
+                    <span>EMI Calculator</span>
+                </button>
+                <button class="calc-type-btn" data-type="reducing">
+                    <i class="fas fa-arrow-trend-down"></i>
+                    <span>Reducing EMI</span>
+                </button>
+                <button class="calc-type-btn" data-type="daywise">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Daywise Interest</span>
+                </button>
+                <button class="calc-type-btn" data-type="rd">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>RD Calculator</span>
+                </button>
+                <button class="calc-type-btn" data-type="loan-cutting">
+                    <i class="fas fa-scissors"></i>
+                    <span>Loan Cutting</span>
+                </button>
+                <button class="calc-type-btn" data-type="vehicle-loan">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Vehicle Loan</span>
+                </button>
+            </div>
+
+            <!-- Simple Interest Calculator -->
+            <div id="simple-calculator" class="calculator-panel active">
+                <h2>Simple Interest Calculator</h2>
+                <p class="formula">Formula: SI = (P × R × (Months/12)) / 100</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="si-principal">Principal Amount (₹)</label>
+                        <input type="number" id="si-principal" placeholder="10000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="si-rate">Rate of Interest (% per annum)</label>
+                        <input type="number" id="si-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="si-time">Time Period (months)</label>
+                        <input type="number" id="si-time" placeholder="24" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateSimpleInterest()">Calculate</button>
+                </div>
+
+                <div id="si-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Simple Interest</span>
+                            <span class="result-value interest" id="si-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Amount</span>
+                            <span class="result-value total" id="si-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="si-breakdown"></div>
+                </div>
+            </div>
+
+            <!-- Compound Interest Calculator -->
+            <div id="compound-calculator" class="calculator-panel hidden">
+                <h2>Compound Interest Calculator</h2>
+                <p class="formula">Formula: A = P(1 + r/n)^(nt)</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="ci-principal">Principal Amount (₹)</label>
+                        <input type="number" id="ci-principal" placeholder="10000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="ci-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="ci-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="ci-time">Time Period (months)</label>
+                        <input type="number" id="ci-time" placeholder="24" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="ci-frequency">Compounding Frequency</label>
+                        <select id="ci-frequency">
+                            <option value="1">Annually</option>
+                            <option value="2">Semi-Annually</option>
+                            <option value="4" selected>Quarterly</option>
+                            <option value="12">Monthly</option>
+                            <option value="365">Daily</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateCompoundInterest()">Calculate</button>
+                </div>
+
+                <div id="ci-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Compound Interest</span>
+                            <span class="result-value interest" id="ci-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Amount</span>
+                            <span class="result-value total" id="ci-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="ci-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('compound-calculator')">📥 Download
+                        Report</button>
+                    <div id="ci-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- EMI Calculator -->
+            <div id="emi-calculator" class="calculator-panel hidden">
+                <h2>EMI Calculator</h2>
+                <p class="formula">Formula: EMI = [P × r × (1+r)^n] / [(1+r)^n - 1]</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="emi-principal">Loan Amount (₹)</label>
+                        <input type="number" id="emi-principal" placeholder="500000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="emi-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="emi-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="emi-tenure">Loan Tenure (months)</label>
+                        <input type="number" id="emi-tenure" placeholder="60" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateEMI()">Calculate</button>
+                </div>
+
+                <div id="emi-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Monthly EMI</span>
+                            <span class="result-value emi" id="emi-amount">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Interest</span>
+                            <span class="result-value interest" id="emi-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Payment</span>
+                            <span class="result-value total" id="emi-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="emi-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('emi-calculator')">📥 Download
+                        Report</button>
+                    <div id="emi-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- Reducing EMI Calculator -->
+            <div id="reducing-calculator" class="calculator-panel hidden">
+                <h2>Reducing EMI Calculator (Fixed Principal)</h2>
+                <p class="formula">Reducing Balance: Fixed Principal + Interest on Current Balance</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="red-principal">Loan Amount (₹)</label>
+                        <input type="number" id="red-principal" placeholder="500000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="red-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="red-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="red-tenure">Loan Tenure (months)</label>
+                        <input type="number" id="red-tenure" placeholder="60" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateReducingEMI()">Calculate</button>
+                </div>
+
+                <div id="red-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">First Month EMI</span>
+                            <span class="result-value emi" id="red-emi-first">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Last Month EMI</span>
+                            <span class="result-value total" id="red-emi-last">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Interest</span>
+                            <span class="result-value interest" id="red-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Payment</span>
+                            <span class="result-value total" id="red-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="red-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('reducing-calculator')">📥 Download
+                        Report</button>
+                    <div id="red-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- Daywise Calculator -->
+            <div id="daywise-calculator" class="calculator-panel hidden">
+                <h2>Daywise Interest Calculator</h2>
+                <p class="formula">Formula: Interest = (Principal × Rate × Days) / (100 × 365)</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="dw-principal">Principal Amount (₹)</label>
+                        <input type="number" id="dw-principal" placeholder="10000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-rate">Rate of Interest (%)</label>
+                        <input type="number" id="dw-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-start-date">Start Date (dd/mm/yyyy)</label>
+                        <input type="text" id="dw-start-date" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-current-date">Current Date (End Date) (dd/mm/yyyy)</label>
+                        <input type="text" id="dw-current-date" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-days-display">Total Days</label>
+                        <input type="text" id="dw-days-display" readonly placeholder="0">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateDaywiseInterest()">Calculate</button>
+                </div>
+
+                <div id="dw-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Total Days</span>
+                            <span class="result-value days" id="dw-total-days">0</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Interest Earned</span>
+                            <span class="result-value interest" id="dw-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Amount</span>
+                            <span class="result-value total" id="dw-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="dw-breakdown"></div>
+                </div>
+            </div>
+
+            <!-- RD Calculator -->
+            <div id="rd-calculator" class="calculator-panel hidden">
+                <h2>Recurring Deposit (RD) Calculator</h2>
+                <p class="formula">Formula: Maturity Value with quarterly compounding</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="rd-deposit">Monthly Deposit (₹)</label>
+                        <input type="number" id="rd-deposit" placeholder="1000" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="rd-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="rd-rate" placeholder="7" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="rd-tenure">Tenure (Months)</label>
+                        <input type="number" id="rd-tenure" placeholder="12" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateRD()">Calculate</button>
+                </div>
+
+                <div id="rd-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Total Investment</span>
+                            <span class="result-value total" id="rd-total-investment">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Interest Earned</span>
+                            <span class="result-value interest" id="rd-total-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Maturity Value</span>
+                            <span class="result-value emi" id="rd-maturity-value">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="rd-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('rd-calculator')">📥 Download Report</button>
+                    <div id="rd-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- Loan Cutting Calculator -->
+            <div id="loan-cutting-calculator" class="calculator-panel hidden">
+                <h2>Loan Cutting Calculator</h2>
+                <p class="formula">Calculates deductions: Shares, Deposit, Fees, and Stationary</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="lc-amount">Loan Amount (₹)</label>
+                        <input type="number" id="lc-amount" placeholder="500000" step="1000">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateLoanCutting()">Calculate Deductions</button>
+                </div>
+
+                <div id="lc-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Net Disbursal</span>
+                            <span class="result-value total" id="lc-net-disbursal">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Deduction</span>
+                            <span class="result-value interest" id="lc-total-deduction">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-table" id="lc-details-table">
+                        <!-- Table populated by JS -->
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-secondary" onclick="generatePDF('loan-cutting-calculator')">📥 Download
+                            Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Loan Calculator -->
+            <div id="vehicle-loan-calculator" class="calculator-panel hidden">
+                <h2>Vehicle Loan Calculator</h2>
+                <p class="formula">Deductions: Shares(5%), Deposit(2%), Processing(0.5%), Building(0.5%) + Stationary
+                </p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="vl-amount">Loan Amount (₹)</label>
+                        <input type="number" id="vl-amount" placeholder="100000" step="1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="vl-type">Vehicle Type</label>
+                        <select id="vl-type">
+                            <option value="2-wheeler">2 Wheeler</option>
+                            <option value="4-wheeler">4 Wheeler</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateVehicleLoan()">Calculate Quote</button>
+                </div>
+
+                <div id="vl-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Net Disbursal</span>
+                            <span class="result-value total" id="vl-net-disbursal">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Deductions</span>
+                            <span class="result-value interest" id="vl-total-deduction">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-table" id="vl-breakdown-table">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-secondary" onclick="generatePDF('vehicle-loan-calculator')">📥 Download
+                            Report</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Master Financial Calculator &copy; 2026 | Built By Vasant Bhor</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        const tabs = document.querySelectorAll('.calc-type-btn');
+        const panels = document.querySelectorAll('.calculator-panel');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.add('hidden'));
+
+                tab.classList.add('active');
+                const type = tab.getAttribute('data-type');
+                document.getElementById(`${type}-calculator`).classList.remove('hidden');
+            });
+        });
+
+        // Utility: Format Currency
+        function fmt(num) {
+            return '₹' + parseFloat(num).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // 1. Simple Interest (SI) - Month Based
+        function calculateSimpleInterest() {
+            const p = parseFloat(document.getElementById('si-principal').value) || 0;
+            const r = parseFloat(document.getElementById('si-rate').value) || 0;
+            const m = parseFloat(document.getElementById('si-time').value) || 0;
+
+            if (p <= 0 || r <= 0 || m <= 0) return alert("Please enter valid values.");
+
+            // Formula: SI = (P * R * T_years) / 100
+            // T_years = Months / 12
+            const si = (p * r * (m / 12)) / 100;
+            const total = p + si;
+
+            document.getElementById('si-interest').textContent = fmt(si);
+            document.getElementById('si-total').textContent = fmt(total);
+            document.getElementById('si-result').classList.remove('hidden');
+
+            document.getElementById('si-breakdown').innerHTML = `
+                For a principal of <strong>${fmt(p)}</strong> at <strong>${r}%</strong> interest for <strong>${m} months</strong>:<br>
+                • Interest per month: ${fmt(si / m)}<br>
+                • Total Interest: <strong>${fmt(si)}</strong>
+            `;
+        }
+
+        // 2. Compound Interest (CI) - Month Based
+        function calculateCompoundInterest() {
+            const p = parseFloat(document.getElementById('ci-principal').value) || 0;
+            const r = parseFloat(document.getElementById('ci-rate').value) || 0;
+            const m = parseFloat(document.getElementById('ci-time').value) || 0;
+            const n = parseInt(document.getElementById('ci-frequency').value) || 1;
+
+            if (p <= 0 || r <= 0 || m <= 0) return alert("Please enter valid values.");
+
+            // Formula: A = P(1 + r/n)^(nt)
+            // t = m / 12 (years)
+            const t = m / 12;
+            const rate_dec = r / 100;
+            const amount = p * Math.pow((1 + rate_dec / n), (n * t));
+            const ci = amount - p;
+
+            document.getElementById('ci-interest').textContent = fmt(ci);
+            document.getElementById('ci-total').textContent = fmt(amount);
+            document.getElementById('ci-result').classList.remove('hidden');
+
+            // Schedule (Monthly projection)
+            let scheduleHtml = '<table><thead><tr><th>SR. NO.</th><th>Bgn Balance</th><th>Interest</th><th>End Balance</th></tr></thead><tbody>';
+            let currentBalance = p;
+            // For projection, we approximate monthly CI
+            const monthlyRate = Math.pow(1 + rate_dec / n, n / 12) - 1;
+
+            for (let i = 1; i <= m; i++) {
+                let monthlyInt = currentBalance * monthlyRate;
+                let endBalance = currentBalance + monthlyInt;
+                scheduleHtml += `<tr><td>${i}</td><td>${fmt(currentBalance)}</td><td>${fmt(monthlyInt)}</td><td>${fmt(endBalance)}</td></tr>`;
+                currentBalance = endBalance;
+            }
+            scheduleHtml += '</tbody></table>';
+            document.getElementById('ci-schedule').innerHTML = scheduleHtml;
+        }
+
+        // 3. EMI Calculator (Standard PMT)
+        function calculateEMI() {
+            const p = parseFloat(document.getElementById('emi-principal').value) || 0;
+            const r = parseFloat(document.getElementById('emi-rate').value) / 100 / 12; // monthly rate
+            const n = parseFloat(document.getElementById('emi-tenure').value) || 0;
+
+            if (p <= 0 || r <= 0 || n <= 0) return alert("Please enter valid values.");
+
+            // EMI = [P x r x (1+r)^n] / [((1+r)^n)-1]
+            const emi = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            const totalPay = emi * n;
+            const totalInt = totalPay - p;
+
+            document.getElementById('emi-amount').textContent = fmt(emi);
+            document.getElementById('emi-interest').textContent = fmt(totalInt);
+            document.getElementById('emi-total').textContent = fmt(totalPay);
+            document.getElementById('emi-result').classList.remove('hidden');
+
+            // Amortization Schedule
+            let schHtml = '<table><thead><tr><th>SR. NO.</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>';
+            let bal = p;
+            for (let i = 1; i <= n; i++) {
+                let intPart = bal * r;
+                let priPart = emi - intPart;
+                bal -= priPart;
+                if (bal < 0) bal = 0;
+                schHtml += `<tr><td>${i}</td><td>${fmt(emi)}</td><td>${fmt(priPart)}</td><td>${fmt(intPart)}</td><td>${fmt(bal)}</td></tr>`;
+            }
+            schHtml += '</tbody></table>';
+            document.getElementById('emi-schedule').innerHTML = schHtml;
+        }
+
+        // 4. Reducing EMI (Fixed Principal)
+        function calculateReducingEMI() {
+            const p = parseFloat(document.getElementById('red-principal').value) || 0;
+            const annualR = parseFloat(document.getElementById('red-rate').value) || 0;
+            const n = parseFloat(document.getElementById('red-tenure').value) || 0;
+
+            if (p <= 0 || annualR <= 0 || n <= 0) return alert("Please enter valid values.");
+
+            const fixedPri = p / n;
+            const monthlyR = (annualR / 100) / 12;
+
+            let totalInt = 0;
+            let schHtml = '<table><thead><tr><th>SR. NO.</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>';
+            let bal = p;
+            let firstEMI = 0, lastEMI = 0;
+
+            for (let i = 1; i <= n; i++) {
+                let intPart = bal * monthlyR;
+                let emi = fixedPri + intPart;
+                totalInt += intPart;
+                bal -= fixedPri;
+                if (i === 1) firstEMI = emi;
+                if (i === n) lastEMI = emi;
+                schHtml += `<tr><td>${i}</td><td>${fmt(emi)}</td><td>${fmt(fixedPri)}</td><td>${fmt(intPart)}</td><td>${fmt(Math.max(0, bal))}</td></tr>`;
+            }
+            schHtml += '</tbody></table>';
+
+            document.getElementById('red-emi-first').textContent = fmt(firstEMI);
+            document.getElementById('red-emi-last').textContent = fmt(lastEMI);
+            document.getElementById('red-interest').textContent = fmt(totalInt);
+            document.getElementById('red-total').textContent = fmt(p + totalInt);
+            document.getElementById('red-schedule').innerHTML = schHtml;
+            document.getElementById('red-result').classList.remove('hidden');
+        }
+
+        // 5. Daywise Interest
+        function calculateDaywiseInterest() {
+            const p = parseFloat(document.getElementById('dw-principal').value) || 0;
+            const r = parseFloat(document.getElementById('dw-rate').value) || 0;
+            const startStr = document.getElementById('dw-start-date').value.trim();
+            const endStr = document.getElementById('dw-current-date').value.trim();
+
+            if (!startStr || !endStr || p <= 0) return alert("Enter valid dates and principal.");
+
+            // Parse dd/mm/yyyy format
+            const d1 = parseDDMMYYYY(startStr);
+            const d2 = parseDDMMYYYY(endStr);
+
+            if (!d1 || !d2) return alert("Invalid date format. Please use dd/mm/yyyy format.");
+
+            // Inclusive difference
+            const diffTime = Math.abs(d2 - d1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            const interest = (p * r * diffDays) / (100 * 365);
+
+            document.getElementById('dw-total-days').textContent = diffDays;
+            document.getElementById('dw-days-display').value = diffDays;
+            document.getElementById('dw-interest').textContent = fmt(interest);
+            document.getElementById('dw-total').textContent = fmt(p + interest);
+            document.getElementById('dw-result').classList.remove('hidden');
+
+            // Update breakdown with formatted dates
+            document.getElementById('dw-breakdown').innerHTML = `
+                From <strong>${startStr}</strong> to <strong>${endStr}</strong>:<br>
+                • Total Days: <strong>${diffDays}</strong><br>
+                • Daily Interest: ${fmt(interest / diffDays)}
+            `;
+        }
+
+        // Helper function to parse dd/mm/yyyy format
+        function parseDDMMYYYY(dateStr) {
+            const parts = dateStr.split('/');
+            if (parts.length !== 3) return null;
+
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+
+            if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+            if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) return null;
+
+            // JavaScript Date uses 0-indexed months
+            const date = new Date(year, month - 1, day);
+
+            // Validate the date is real (e.g., not 31/02/2024)
+            if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+                return null;
+            }
+
+            return date;
+        }
+
+        // 6. RD Calculator (Quarterly Compounding)
+        function calculateRD() {
+            const p = parseFloat(document.getElementById('rd-deposit').value) || 0;
+            const r = parseFloat(document.getElementById('rd-rate').value) || 0;
+            const m = parseInt(document.getElementById('rd-tenure').value) || 0;
+
+            if (p <= 0 || r <= 0 || m <= 0) return alert("Enter valid values.");
+
+            // Standard Bank RD Formula (Quarterly Compounding)
+            // Maturity Value (M) =  P * [(1 + i)^n - 1] / [1 - (1 + i)^(-1/3)]
+            // i = annual_rate / 400 (quarterly interest rate)
+            // n = tenure_in_months / 3 (number of quarters)
+
+            const i = r / 400; // quarterly rate
+            const n = m / 3;   // number of quarters
+
+            // Final Maturity Value
+            const maturityValue = p * (Math.pow(1 + i, n) - 1) / (1 - Math.pow(1 + i, -1 / 3));
+            const totalInvested = p * m;
+            const totalInterest = maturityValue - totalInvested;
+
+            document.getElementById('rd-total-investment').textContent = fmt(totalInvested);
+            document.getElementById('rd-total-interest').textContent = fmt(totalInterest);
+            document.getElementById('rd-maturity-value').textContent = fmt(maturityValue);
+            document.getElementById('rd-result').classList.remove('hidden');
+
+            // Monthly Investment Schedule
+            let schHtml = '<table><thead><tr><th>SR. NO.</th><th>Monthly Deposit</th><th>Total Invested</th><th>Interest (Accrued)</th><th>Balance</th></tr></thead><tbody>';
+
+            let totalInvestedProgress = 0;
+
+            for (let month = 1; month <= m; month++) {
+                totalInvestedProgress += p;
+
+                // Show total maturity growth month-by-month
+                const currentM = p * (Math.pow(1 + i, month / 3) - 1) / (1 - Math.pow(1 + i, -1 / 3));
+                const intForThisMonth = currentM - totalInvestedProgress;
+
+                schHtml += `<tr><td>${month}</td><td>${fmt(p)}</td><td>${fmt(totalInvestedProgress)}</td><td>${fmt(intForThisMonth)}</td><td>${fmt(currentM)}</td></tr>`;
+            }
+
+            schHtml += '</tbody></table>';
+            document.getElementById('rd-schedule').innerHTML = schHtml;
+        }
+
+        // 8. Loan Cutting Calculator
+        function calculateLoanCutting() {
+            const p = parseFloat(document.getElementById('lc-amount').value) || 0;
+            if (p <= 0) return alert("Please enter a valid Loan Amount.");
+
+            let sharesPct, depositPct, procFeePct, bldgFundPct, stationary;
+
+            // Stationary Logic: 240 (<=1L), 360 (1L-5L), 600 (>5L)
+            if (p <= 100000) {
+                stationary = 240;
+            } else if (p <= 500000) {
+                stationary = 360;
+            } else {
+                stationary = 600;
+            }
+
+            // Logic based on 25 Lac (2,500,000) threshold
+            if (p < 2500000) {
+                sharesPct = 0.05;   // 5%
+                depositPct = 0.02;  // 2%
+                procFeePct = 0.005; // 0.5%
+                bldgFundPct = 0.005;// 0.5%
+            } else {
+                sharesPct = 0.025;  // 2.5%
+                depositPct = 0.035; // 3.5%
+                procFeePct = 0.0025;// 0.25%
+                bldgFundPct = 0.0025;// 0.25%
+            }
+
+            // Round only shares to nearest 100
+            const shares = Math.ceil((p * sharesPct) / 100) * 100;
+            const deposit = p * depositPct;
+            const procFee = p * procFeePct;
+            const bldgFund = p * bldgFundPct;
+            const totalDeduction = shares + deposit + procFee + bldgFund + stationary;
+            const netDisbursal = p - totalDeduction;
+
+            document.getElementById('lc-net-disbursal').textContent = fmt(netDisbursal);
+            document.getElementById('lc-total-deduction').textContent = fmt(totalDeduction);
+            document.getElementById('lc-result').classList.remove('hidden');
+
+            // Populate Details Table
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Rate / Value</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Shares</td><td>${(sharesPct * 100).toFixed(2)}%</td><td>${fmt(shares)}</td></tr>
+                        <tr><td>Fixed Deposit</td><td>${(depositPct * 100).toFixed(2)}%</td><td>${fmt(deposit)}</td></tr>
+                        <tr><td>Processing Fee</td><td>${(procFeePct * 100).toFixed(2)}%</td><td>${fmt(procFee)}</td></tr>
+                        <tr><td>Building Fund</td><td>${(bldgFundPct * 100).toFixed(2)}%</td><td>${fmt(bldgFund)}</td></tr>
+                        <tr><td>Stationary</td><td>Fixed</td><td>${fmt(stationary)}</td></tr>
+                        <tr style="font-weight: bold; background: rgba(99, 102, 241, 0.1);">
+                            <td colspan="2">TOTAL DEDUCTION</td>
+                            <td>${fmt(totalDeduction)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('lc-details-table').innerHTML = tableHtml;
+        }
+
+        // 7. High-Fidelity PDF Report (Native Print Engine)
+        function generatePDF(panelId) {
+            const panel = document.getElementById(panelId);
+            const title = panel.querySelector('h2').textContent;
+            const results = panel.querySelector('.result-grid').innerHTML;
+            const breakdown = panel.querySelector('.breakdown') ? panel.querySelector('.breakdown').innerHTML : "";
+            const schedule = panel.querySelector('.schedule-table') ? panel.querySelector('.schedule-table').innerHTML : "";
+
+            const reportNo = 'FIN-' + Date.now().toString().slice(-6);
+            const dateStr = new Date().toLocaleDateString('en-IN');
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>${title} - ${reportNo}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+                        .header { border-bottom: 2px solid #6366f1; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+                        h1 { margin: 0; color: #6366f1; font-size: 24px; text-transform: uppercase; }
+                        .report-meta { text-align: right; font-size: 16px; color: #1e293b; background: #f1f5f9; padding: 10px; border-radius: 5px; }
+                        .report-meta strong { color: #6366f1; }
+                        .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0; }
+                        .result-card { border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; text-align: center; background: #f8fafc; }
+                        .result-label { display: block; font-size: 12px; color: #64748b; margin-bottom: 5px; font-weight: 600; }
+                        .result-value { font-size: 18px; font-weight: 700; color: #1e293b; }
+                        .breakdown { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #6366f1; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th { background: #6366f1; color: white; padding: 10px; text-align: left; font-size: 13px; }
+                        td { padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+                        tr:nth-child(even) { background: #f8fafc; }
+                        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+                        @media print { @page { size: portrait; margin: 15mm; } }
+                    </style>
+                </head>
+                <body onload="window.print(); window.close();">
+                    <div class="header">
+                        <div><h1>${title}</h1></div>
+                        <div class="report-meta">
+                            <strong>Report No:</strong> ${reportNo}<br>
+                            <strong>Date:</strong> ${dateStr}
+                        </div>
+                    </div>
+
+                    <div class="result-grid">${results}</div>
+                    ${breakdown ? '<div class="breakdown">' + breakdown + '</div>' : ''}
+                    ${schedule ? '<h3>Payment Schedule</h3>' + schedule : ''}
+
+                    <div class="footer">
+                        Financial Report generated by Master Interest Calculator | Built by Vasant Bhor
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // 9. Vehicle Loan Calculator
+        function calculateVehicleLoan() {
+            // Get inputs
+            const inputAmount = parseFloat(document.getElementById('vl-amount').value) || 0;
+            const type = document.getElementById('vl-type').value;
+
+            if (inputAmount <= 0) return alert("Please enter a valid Loan Amount.");
+
+            // Based on requirements:
+            // Shares: 5%
+            // Deposit: 2%
+            // Processing: 0.5%
+            // Building Fund: 0.5%
+            // Stationery: 830 (2-wheeler) or 1180 (4-wheeler)
+
+            // Round input amount to nearest 100
+            const p = Math.ceil(inputAmount / 100) * 100;
+
+            // Rates
+            const sharesPct = 0.05;   // 5%
+            const depositPct = 0.02;  // 2%
+            const procFeePct = 0.005; // 0.5%
+            const bldgFundPct = 0.005;// 0.5%
+
+            let stationary = 0;
+            if (type === '2-wheeler') {
+                stationary = 830;
+            } else {
+                stationary = 1180;
+            }
+
+            // Calculations
+            const shares = Math.ceil((p * sharesPct) / 100) * 100; // Round to nearest 100
+            // For other components, simple multiplication since rates are now decimals
+            const deposit = p * depositPct;
+            const procFee = p * procFeePct;
+            const bldgFund = p * bldgFundPct;
+
+            const totalDeduction = shares + deposit + procFee + bldgFund + stationary;
+            const netDisbursal = p - totalDeduction;
+
+            // Display Results
+            document.getElementById('vl-net-disbursal').textContent = fmt(netDisbursal);
+            document.getElementById('vl-total-deduction').textContent = fmt(totalDeduction);
+            document.getElementById('vl-result').classList.remove('hidden');
+
+            // Populate Breakdown Table
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Rate / Value</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Shares</td><td>${(sharesPct * 100).toFixed(2)}%</td><td>${fmt(shares)}</td></tr>
+                        <tr><td>Deposit</td><td>${(depositPct * 100).toFixed(2)}%</td><td>${fmt(deposit)}</td></tr>
+                        <tr><td>Processing Fee</td><td>${(procFeePct * 100).toFixed(2)}%</td><td>${fmt(procFee)}</td></tr>
+                        <tr><td>Building Fund</td><td>${(bldgFundPct * 100).toFixed(2)}%</td><td>${fmt(bldgFund)}</td></tr>
+                        <tr><td>Stationery (${type === '2-wheeler' ? '2 Wheeler' : '4 Wheeler'})</td><td>Fixed</td><td>${fmt(stationary)}</td></tr>
+                        <tr style="font-weight: bold; background: rgba(99, 102, 241, 0.1);">
+                            <td colspan="2">TOTAL DEDUCTION</td>
+                            <td>${fmt(totalDeduction)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('vl-breakdown-table').innerHTML = tableHtml;
+        }
+
+        // Auto-update days in Daywise
+        document.getElementById('dw-start-date').addEventListener('input', handleDateInput);
+        document.getElementById('dw-current-date').addEventListener('input', handleDateInput);
+
+        // Auto-format date input (converts 20122025 to 20/12/2025)
+        function handleDateInput(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2);
+            }
+            if (value.length >= 5) {
+                value = value.substring(0, 5) + '/' + value.substring(5);
+            }
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+
+            e.target.value = value;
+            updateDays();
+        }
+
+        function updateDays() {
+            const s = document.getElementById('dw-start-date').value.trim();
+            const e = document.getElementById('dw-current-date').value.trim();
+            if (s && e) {
+                const d1 = parseDDMMYYYY(s);
+                const d2 = parseDDMMYYYY(e);
+                if (d1 && d2) {
+                    const diff = Math.ceil(Math.abs(d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+                    document.getElementById('dw-days-display').value = diff;
+                } else {
+                    document.getElementById('dw-days-display').value = '';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
