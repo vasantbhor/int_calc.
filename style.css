@@ -1,0 +1,602 @@
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-light: #f1f5f9;
+    --glass-bg: #ffffff;
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --text-main: #0f172a;
+    --text-dim: #475569;
+    --accent-emerald: #10b981;
+    --accent-cyan: #06b6d4;
+    --accent-rose: #f43f5e;
+    --accent-amber: #f59e0b;
+    --accent-purple: #8b5cf6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: #f1f5f9;
+    background-image:
+        radial-gradient(circle at 10% 15%, rgba(6, 182, 212, 0.12) 0px, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(236, 72, 153, 0.12) 0px, transparent 40%),
+        radial-gradient(circle at 20% 85%, rgba(16, 185, 129, 0.12) 0px, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.12) 0px, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0px, transparent 55%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 2.5rem 1rem;
+}
+
+.app-container {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.logo-icon {
+    font-size: 2.75rem;
+    filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.3));
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+.header h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+    display: inline-block;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.4rem 1.25rem;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Selector buttons - Inactive: Faint pastel tint | Active: Rich Dark Solid fill */
+.calculator-selector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    padding: 1.25rem;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 1.75rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+.calc-type-btn {
+    flex: 1 1 125px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1rem 0.6rem;
+    min-height: 105px;
+    border-radius: 1.25rem;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1.5px solid transparent;
+}
+
+.calc-type-btn i {
+    font-size: 1.85rem;
+    transition: all 0.3s ease;
+}
+
+.calc-type-btn span {
+    text-align: center;
+    line-height: 1.25;
+}
+
+/* --- FAINT PASTEL COLOR TINTS FOR INACTIVE TABS --- */
+
+/* 1. Simple Interest - Faint Cyan */
+.calc-type-btn[data-type="simple"] {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+.calc-type-btn[data-type="simple"] i { color: #0284c7; }
+
+/* 2. Compound Interest - Faint Emerald */
+.calc-type-btn[data-type="compound"] {
+    background: #d1fae5;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+.calc-type-btn[data-type="compound"] i { color: #059669; }
+
+/* 3. EMI Calculator - Faint Indigo */
+.calc-type-btn[data-type="emi"] {
+    background: #ede9fe;
+    color: #4338ca;
+    border-color: #ddd6fe;
+}
+.calc-type-btn[data-type="emi"] i { color: #6366f1; }
+
+/* 4. Reducing EMI - Faint Rose */
+.calc-type-btn[data-type="reducing"] {
+    background: #ffe4e6;
+    color: #be123c;
+    border-color: #fecdd3;
+}
+.calc-type-btn[data-type="reducing"] i { color: #e11d48; }
+
+/* 5. Daywise Interest - Faint Amber */
+.calc-type-btn[data-type="daywise"] {
+    background: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+}
+.calc-type-btn[data-type="daywise"] i { color: #d97706; }
+
+/* 6. RD Calculator - Faint Magenta */
+.calc-type-btn[data-type="rd"] {
+    background: #fae8ff;
+    color: #a21caf;
+    border-color: #f5d0fe;
+}
+.calc-type-btn[data-type="rd"] i { color: #c026d3; }
+
+/* 7. Loan Cutting - Faint Violet */
+.calc-type-btn[data-type="loan-cutting"] {
+    background: #f3e8ff;
+    color: #6b21a8;
+    border-color: #e9d5ff;
+}
+.calc-type-btn[data-type="loan-cutting"] i { color: #7c3aed; }
+
+/* 8. Vehicle Loan - Faint Gold */
+.calc-type-btn[data-type="vehicle-loan"] {
+    background: #fef9c3;
+    color: #854d0e;
+    border-color: #fef08a;
+}
+.calc-type-btn[data-type="vehicle-loan"] i { color: #ca8a04; }
+
+.calc-type-btn:hover:not(.active) {
+    transform: translateY(-3px);
+    filter: brightness(0.95);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* --- DARK SOLID COLOR FILLS WHEN CLICKED (ACTIVE) --- */
+
+.calc-type-btn.active {
+    color: #ffffff !important;
+    transform: translateY(-4px) scale(1.05);
+}
+
+.calc-type-btn.active i {
+    color: #ffffff !important;
+    transform: scale(1.15);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.calc-type-btn.active span {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.calc-type-btn[data-type="simple"].active {
+    background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%);
+    border-color: #0284c7;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.45);
+}
+
+.calc-type-btn[data-type="compound"].active {
+    background: linear-gradient(135deg, #059669 0%, #065f46 100%);
+    border-color: #059669;
+    box-shadow: 0 10px 25px rgba(5, 150, 105, 0.45);
+}
+
+.calc-type-btn[data-type="emi"].active {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    border-color: #4f46e5;
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.45);
+}
+
+.calc-type-btn[data-type="reducing"].active {
+    background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+    border-color: #e11d48;
+    box-shadow: 0 10px 25px rgba(225, 29, 72, 0.45);
+}
+
+.calc-type-btn[data-type="daywise"].active {
+    background: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+    border-color: #d97706;
+    box-shadow: 0 10px 25px rgba(217, 119, 6, 0.45);
+}
+
+.calc-type-btn[data-type="rd"].active {
+    background: linear-gradient(135deg, #c026d3 0%, #86198f 100%);
+    border-color: #c026d3;
+    box-shadow: 0 10px 25px rgba(192, 38, 211, 0.45);
+}
+
+.calc-type-btn[data-type="loan-cutting"].active {
+    background: linear-gradient(135deg, #7c3aed 0%, #581c87 100%);
+    border-color: #7c3aed;
+    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.45);
+}
+
+.calc-type-btn[data-type="vehicle-loan"].active {
+    background: linear-gradient(135deg, #ca8a04 0%, #713f12 100%);
+    border-color: #ca8a04;
+    box-shadow: 0 10px 25px rgba(202, 138, 4, 0.45);
+}
+
+/* Panel - Light Glass/White Container */
+.calculator-panel {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.calculator-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #06b6d4, #10b981, #6366f1, #f43f5e, #f59e0b, #ec4899, #7c3aed);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.formula {
+    color: #0284c7;
+    background: linear-gradient(90deg, #e0f2fe, #f0f9ff);
+    border-left: 4px solid #0284c7;
+    padding: 0.6rem 1rem;
+    border-radius: 0 0.75rem 0.75rem 0;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* Inputs */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.25rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.input-group label::before {
+    content: '•';
+    color: #4f46e5;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+input,
+select {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.85rem;
+    padding: 0.85rem 1.1rem;
+    color: #0f172a;
+    font-size: 1.05rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+input:hover,
+select:hover {
+    border-color: #94a3b8;
+    background: #ffffff;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #4f46e5;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+select option {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+/* Buttons */
+.action-bar {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    padding: 0.85rem 2.25rem;
+    border-radius: 0.85rem;
+    border: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+    color: #ffffff;
+    width: 100%;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+    letter-spacing: 0.3px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.45);
+    filter: brightness(1.08);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%);
+    border: 1.5px solid #a5f3fc;
+    color: #0284c7;
+    font-size: 0.95rem;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    color: #ffffff;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+}
+
+/* Results */
+.result-panel {
+    margin-top: 2.5rem;
+    border-top: 2px dashed #e2e8f0;
+    padding-top: 2rem;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    border: 1.5px solid #e2e8f0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.result-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.result-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.result-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.result-value.interest {
+    color: #059669;
+}
+
+.result-value.total {
+    color: #4f46e5;
+}
+
+.result-value.emi {
+    color: #d97706;
+}
+
+.breakdown {
+    margin-top: 1.75rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border: 1px solid #a7f3d0;
+    border-left: 5px solid #10b981;
+    border-radius: 0.85rem;
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: #1e293b;
+}
+
+.breakdown strong {
+    color: #047857;
+}
+
+/* Schedule Table */
+.schedule-table {
+    margin-top: 2rem;
+    overflow-x: auto;
+    border-radius: 1rem;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+th {
+    text-align: left;
+    padding: 1.1rem 1.25rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: #ffffff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 500;
+}
+
+tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tr:hover {
+    background: #eef2ff;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    color: #64748b;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.footer p {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .calculator-panel {
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .calc-type-btn {
+        flex: 1 1 100px;
+        min-height: 90px;
+        padding: 0.75rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    .calc-type-btn i {
+        font-size: 1.5rem;
+    }
+}

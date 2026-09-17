@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Interest Calculator | Financial Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">💰</div>
+                <h1>Master Interest Calculator</h1>
+            </div>
+            <p class="tagline">Calculate Simple, Compound, EMI & More | Built By Vasant Bhor</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Calculator Type Selector -->
+            <div class="calculator-selector">
+                <button class="calc-type-btn active" data-type="simple">
+                    <i class="fas fa-calculator"></i>
+                    <span>Simple Interest</span>
+                </button>
+                <button class="calc-type-btn" data-type="compound">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Compound Interest</span>
+                </button>
+                <button class="calc-type-btn" data-type="emi">
+                    <i class="fas fa-home"></i>
+                    <span>EMI Calculator</span>
+                </button>
+                <button class="calc-type-btn" data-type="reducing">
+                    <i class="fas fa-arrow-trend-down"></i>
+                    <span>Reducing EMI</span>
+                </button>
+                <button class="calc-type-btn" data-type="daywise">
+                    <i class="fas fa-calendar-days"></i>
+                    <span>Daywise Interest</span>
+                </button>
+                <button class="calc-type-btn" data-type="rd">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span>RD Calculator</span>
+                </button>
+                <button class="calc-type-btn" data-type="loan-cutting">
+                    <i class="fas fa-scissors"></i>
+                    <span>Loan Cutting</span>
+                </button>
+                <button class="calc-type-btn" data-type="vehicle-loan">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Vehicle Loan</span>
+                </button>
+            </div>
+
+            <!-- Simple Interest Calculator -->
+            <div id="simple-calculator" class="calculator-panel active">
+                <h2>Simple Interest Calculator</h2>
+                <p class="formula">Formula: SI = (P × R × (Months/12)) / 100</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="si-principal">Principal Amount (₹)</label>
+                        <input type="number" id="si-principal" placeholder="10000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="si-rate">Rate of Interest (% per annum)</label>
+                        <input type="number" id="si-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="si-time">Time Period (months)</label>
+                        <input type="number" id="si-time" placeholder="24" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateSimpleInterest()">Calculate</button>
+                </div>
+
+                <div id="si-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Simple Interest</span>
+                            <span class="result-value interest" id="si-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Amount</span>
+                            <span class="result-value total" id="si-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="si-breakdown"></div>
+                </div>
+            </div>
+
+            <!-- Compound Interest Calculator -->
+            <div id="compound-calculator" class="calculator-panel hidden">
+                <h2>Compound Interest Calculator</h2>
+                <p class="formula">Formula: A = P(1 + r/n)^(nt)</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="ci-principal">Principal Amount (₹)</label>
+                        <input type="number" id="ci-principal" placeholder="10000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="ci-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="ci-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="ci-time">Time Period (months)</label>
+                        <input type="number" id="ci-time" placeholder="24" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="ci-frequency">Compounding Frequency</label>
+                        <select id="ci-frequency">
+                            <option value="1">Annually</option>
+                            <option value="2">Semi-Annually</option>
+                            <option value="4" selected>Quarterly</option>
+                            <option value="12">Monthly</option>
+                            <option value="365">Daily</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateCompoundInterest()">Calculate</button>
+                </div>
+
+                <div id="ci-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Compound Interest</span>
+                            <span class="result-value interest" id="ci-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Amount</span>
+                            <span class="result-value total" id="ci-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="ci-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('compound-calculator')">📥 Download
+                        Report</button>
+                    <div id="ci-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- EMI Calculator -->
+            <div id="emi-calculator" class="calculator-panel hidden">
+                <h2>EMI Calculator</h2>
+                <p class="formula">Formula: EMI = [P × r × (1+r)^n] / [(1+r)^n - 1]</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="emi-principal">Loan Amount (₹)</label>
+                        <input type="number" id="emi-principal" placeholder="500000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="emi-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="emi-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="emi-tenure">Loan Tenure (months)</label>
+                        <input type="number" id="emi-tenure" placeholder="60" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateEMI()">Calculate</button>
+                </div>
+
+                <div id="emi-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Monthly EMI</span>
+                            <span class="result-value emi" id="emi-amount">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Interest</span>
+                            <span class="result-value interest" id="emi-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Payment</span>
+                            <span class="result-value total" id="emi-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="emi-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('emi-calculator')">📥 Download
+                        Report</button>
+                    <div id="emi-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- Reducing EMI Calculator -->
+            <div id="reducing-calculator" class="calculator-panel hidden">
+                <h2>Reducing EMI Calculator (Fixed Principal)</h2>
+                <p class="formula">Reducing Balance: Fixed Principal + Interest on Current Balance</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="red-principal">Loan Amount (₹)</label>
+                        <input type="number" id="red-principal" placeholder="500000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="red-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="red-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="red-tenure">Loan Tenure (months)</label>
+                        <input type="number" id="red-tenure" placeholder="60" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateReducingEMI()">Calculate</button>
+                </div>
+
+                <div id="red-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">First Month EMI</span>
+                            <span class="result-value emi" id="red-emi-first">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Last Month EMI</span>
+                            <span class="result-value total" id="red-emi-last">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Interest</span>
+                            <span class="result-value interest" id="red-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Payment</span>
+                            <span class="result-value total" id="red-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="red-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('reducing-calculator')">📥 Download
+                        Report</button>
+                    <div id="red-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- Daywise Calculator -->
+            <div id="daywise-calculator" class="calculator-panel hidden">
+                <h2>Daywise Interest Calculator</h2>
+                <p class="formula">Formula: Interest = (Principal × Rate × Days) / (100 × 365)</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="dw-principal">Principal Amount (₹)</label>
+                        <input type="number" id="dw-principal" placeholder="10000" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-rate">Rate of Interest (%)</label>
+                        <input type="number" id="dw-rate" placeholder="10" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-start-date">Start Date (dd/mm/yyyy)</label>
+                        <input type="text" id="dw-start-date" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-current-date">Current Date (End Date) (dd/mm/yyyy)</label>
+                        <input type="text" id="dw-current-date" placeholder="dd/mm/yyyy">
+                    </div>
+                    <div class="input-group">
+                        <label for="dw-days-display">Total Days</label>
+                        <input type="text" id="dw-days-display" readonly placeholder="0">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateDaywiseInterest()">Calculate</button>
+                </div>
+
+                <div id="dw-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Total Days</span>
+                            <span class="result-value days" id="dw-total-days">0</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Interest Earned</span>
+                            <span class="result-value interest" id="dw-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Amount</span>
+                            <span class="result-value total" id="dw-total">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="dw-breakdown"></div>
+                </div>
+            </div>
+
+            <!-- RD Calculator -->
+            <div id="rd-calculator" class="calculator-panel hidden">
+                <h2>Recurring Deposit (RD) Calculator</h2>
+                <p class="formula">Formula: Maturity Value with quarterly compounding</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="rd-deposit">Monthly Deposit (₹)</label>
+                        <input type="number" id="rd-deposit" placeholder="1000" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="rd-rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="rd-rate" placeholder="7" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="rd-tenure">Tenure (Months)</label>
+                        <input type="number" id="rd-tenure" placeholder="12" step="1">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateRD()">Calculate</button>
+                </div>
+
+                <div id="rd-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Total Investment</span>
+                            <span class="result-value total" id="rd-total-investment">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Interest Earned</span>
+                            <span class="result-value interest" id="rd-total-interest">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Maturity Value</span>
+                            <span class="result-value emi" id="rd-maturity-value">₹0.00</span>
+                        </div>
+                    </div>
+                    <div class="breakdown" id="rd-breakdown"></div>
+                    <button class="btn btn-secondary" onclick="generatePDF('rd-calculator')">📥 Download Report</button>
+                    <div id="rd-schedule" class="schedule-table"></div>
+                </div>
+            </div>
+
+            <!-- Loan Cutting Calculator -->
+            <div id="loan-cutting-calculator" class="calculator-panel hidden">
+                <h2>Loan Cutting Calculator</h2>
+                <p class="formula">Calculates deductions: Shares, Deposit, Fees, and Stationary</p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="lc-amount">Loan Amount (₹)</label>
+                        <input type="number" id="lc-amount" placeholder="500000" step="1000">
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateLoanCutting()">Calculate Deductions</button>
+                </div>
+
+                <div id="lc-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Net Disbursal</span>
+                            <span class="result-value total" id="lc-net-disbursal">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Deduction</span>
+                            <span class="result-value interest" id="lc-total-deduction">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-table" id="lc-details-table">
+                        <!-- Table populated by JS -->
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-secondary" onclick="generatePDF('loan-cutting-calculator')">📥 Download
+                            Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Loan Calculator -->
+            <div id="vehicle-loan-calculator" class="calculator-panel hidden">
+                <h2>Vehicle Loan Calculator</h2>
+                <p class="formula">Deductions: Shares(5%), Deposit(2%), Processing(0.5%), Building(0.5%) + Stationary
+                </p>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="vl-amount">Loan Amount (₹)</label>
+                        <input type="number" id="vl-amount" placeholder="100000" step="1000">
+                    </div>
+                    <div class="input-group">
+                        <label for="vl-type">Vehicle Type</label>
+                        <select id="vl-type">
+                            <option value="2-wheeler">2 Wheeler</option>
+                            <option value="4-wheeler">4 Wheeler</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="calculateVehicleLoan()">Calculate Quote</button>
+                </div>
+
+                <div id="vl-result" class="result-panel hidden">
+                    <div class="result-grid">
+                        <div class="result-card">
+                            <span class="result-label">Net Disbursal</span>
+                            <span class="result-value total" id="vl-net-disbursal">₹0.00</span>
+                        </div>
+                        <div class="result-card">
+                            <span class="result-label">Total Deductions</span>
+                            <span class="result-value interest" id="vl-total-deduction">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-table" id="vl-breakdown-table">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-secondary" onclick="generatePDF('vehicle-loan-calculator')">📥 Download
+                            Report</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Master Financial Calculator &copy; 2026 | Built By Vasant Bhor</p>
+        </footer>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+
+</html>
